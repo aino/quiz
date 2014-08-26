@@ -1,0 +1,17 @@
+{
+  "name": "Test Quiz",
+  "slug": "test",
+  "description": "Är du en bra människa? Testa dig här",
+  "questions": [
+    {
+      "title": "Vem är bäst?",
+      "solution": 0,
+      "answers": ["David", "Mikko", "jesper", "jakob"]
+    },
+    {
+      "title": "Vem är äldst?",
+      "solution": 1,
+      "answers": ["David", "Mikko", "jesper", "jakob"]
+    }
+  ]
+}

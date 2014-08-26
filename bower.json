@@ -1,0 +1,23 @@
+{
+  "name": "Kokplatta",
+  "version": "1.0.0",
+  "authors": [
+    "Aino AB"
+  ],
+  "description": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "tmp"
+  ],
+  "main": "src/js/index.js",
+  "dependencies": {
+    "html5shiv": "~3.7.0",
+    "es5-shim": "~2.3.0",
+    "ainojs": "~1.0.6",
+    "normalize-css": "~3.0.0"
+  }
+}
