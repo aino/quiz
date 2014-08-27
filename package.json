@@ -21,7 +21,8 @@
     "co-fs": "^1.2.0",
     "ainojs-detect": "^1.0.1",
     "ainojs-react-touchclick": "^1.0.1",
-    "qs": "^1.2.2"
+    "qs": "^1.2.2",
+    "ainojs-requestframe": "^1.0.0"
   },
   "devDependencies": {
     "gulp": "~3.6.0",

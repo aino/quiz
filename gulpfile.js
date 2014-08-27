@@ -166,7 +166,7 @@ task.assets = function() {
 }
 
 task.watch = function() {
-  watch({glob: config.src + 'js/**/*.js'}, function() { task.app() })
+  watch({glob: config.src + 'js/**/*'}, function() { task.app() })
   watch({glob: config.src + 'html/**/*.html'}, function() { task.html() })
   watch({glob: config.src + 'css/**/*.css'}, function() { task.styles() })
   watch({glob: config.src + 'assets/**/*'}, function() { task.assets() })

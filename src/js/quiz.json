@@ -6,11 +6,13 @@
     {
       "title": "Vem är bäst?",
       "solution": 0,
+      "time": 3,
       "answers": ["David", "Mikko", "jesper", "jakob"]
     },
     {
       "title": "Vem är äldst?",
       "solution": 1,
+      "time": 5,
       "answers": ["David", "Mikko", "jesper", "jakob"]
     }
   ]

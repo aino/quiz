@@ -6,7 +6,6 @@ var TouchClick = require('ainojs-react-touchclick')
 var IntroComponent = require('./intro')
 var QuestionComponent = require('./question')
 
-
 module.exports = React.createClass({
 
   getInitialState: function() {
@@ -42,10 +41,9 @@ module.exports = React.createClass({
       this.setState({ q: 0 })
   },
 
-  onAnswer: function(e) {
+  onAnswer: function(answer) {
     var a = this.state.answers.slice(0)
-    a.push( e.target.getAttribute('data-index') )
-    console.log(a)
+    a.push( answer )
     this.setState({ 
       answers: a,
       q: this.state.q+1
@@ -63,9 +61,16 @@ module.exports = React.createClass({
     if ( routeName == '404' )
       return <div>404</div>
 
-    var main = this.state.q === null ? 
-      <IntroComponent start={this.onStart} /> : 
-      <QuestionComponent q={this.state.q} answer={this.onAnswer} />
+    var test = models.quizes.getModel({ slug: 'test' })
+
+    var main
+
+    if ( this.state.q === null )
+      main = <IntroComponent start={this.onStart} quiz={test} />
+    else if (this.state.q < test.get('questions').length )
+      main = <QuestionComponent q={this.state.q} question={test.get('questions')[this.state.q]} onAnswer={this.onAnswer} />
+    else
+      main = <div>WIN</div>
 
     return (
       <TouchClick click={this.props.clickHandler}>
