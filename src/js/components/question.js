@@ -14,15 +14,14 @@ module.exports = React.createClass({
   },
   stop: false,
   tick: function() {
+    if ( !this.isMounted() )
+      return
     if ( !this.stop && this.state.time !== null ) {
       var elapsed = Date.now() - this.state.time
       this.setState({ elapsed: elapsed })
       if ( elapsed >= this.state.limit ) {
         this.setState({ time: null, elapsed: 0 }, function() {
-          this.props.onAnswer({
-            time: this.state.limit,
-            guess: null
-          })
+          this.answer(null)
         })
       }
     }
@@ -35,11 +34,15 @@ module.exports = React.createClass({
       elapsed: 0
     })
   },
-  onAnswer: function(e) {
+  answer: function(guess) {
     this.props.onAnswer({
-      time: this.state.elapsed,
-      guess: parseInt(e.target.getAttribute('data-index'), 10)
+      time: 1-Math.min(1, this.state.elapsed/this.state.limit),
+      guess: guess || null,
+      q: this.props.q
     })
+  },
+  onButtonClick: function(e) {
+    this.answer(parseInt(e.target.getAttribute('data-index'), 10))
   },
   componentDidMount: function() {
     this.startTimer()
@@ -54,7 +57,7 @@ module.exports = React.createClass({
   },
   render: function() {
     var buttons = this.props.question.answers.map(function(a,i) {
-      return <button data-index={i} onClick={this.onAnswer}>{a}</button>
+      return <button data-index={i} onClick={this.onButtonClick}>{a}</button>
     }, this)
 
     var progressStyles = {

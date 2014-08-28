@@ -110,7 +110,7 @@ task.lib = function() {
         //detectGlobals: false
       },{
         'require': config.npmjs
-      }).pipe(source()).pipe(buffer())
+      }).pipe(source('lib.js')).pipe(buffer())
     )
       .pipe(concat('lib.js'))
       //.pipe(uglify())

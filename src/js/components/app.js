@@ -4,6 +4,7 @@ var React = require('react')
 var models = require('../models')
 var TouchClick = require('ainojs-react-touchclick')
 var IntroComponent = require('./intro')
+var OutroComponent = require('./outro')
 var QuestionComponent = require('./question')
 
 module.exports = React.createClass({
@@ -62,15 +63,20 @@ module.exports = React.createClass({
       return <div>404</div>
 
     var test = models.quizes.getModel({ slug: 'test' })
+    var questions = test.get('questions')
 
     var main
 
     if ( this.state.q === null )
       main = <IntroComponent start={this.onStart} quiz={test} />
     else if (this.state.q < test.get('questions').length )
-      main = <QuestionComponent q={this.state.q} question={test.get('questions')[this.state.q]} onAnswer={this.onAnswer} />
-    else
-      main = <div>WIN</div>
+      main = <QuestionComponent q={this.state.q} question={questions[this.state.q]} onAnswer={this.onAnswer} />
+    else {
+      var answers = this.state.answers
+      answers.forEach(function(answer) {
+        console.log(answer)
+      })
+    }
 
     return (
       <TouchClick click={this.props.clickHandler}>
