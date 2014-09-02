@@ -26,7 +26,7 @@ var openLinkInTab = false
 var crumbs = Backbone.history.crumbs = []
 var history = Router.history
 
-var clickHandler = function(e) {
+var clickHandler = function(e, handler) {
 
   var $target = $(e.target).closest('a, button')
   var href = $target.attr('href')
@@ -36,26 +36,27 @@ var clickHandler = function(e) {
     $target.attr('href', '#')
   }
 
-  href = $target.attr('data-href')
-  clicked = true
+  var href = $target.attr('data-href')
 
   if ( href ) {
+    clicked = true
     var fake = document.createElement('a')
     fake.href = href
-    if ( $target.attr('target') == '_blank' )
+    if (fake.host == "") // IE9
+      fake.href = fake.href;
+    if ( $target.attr('target') == '_blank' || openLinkInTab )
       window.open(href)
     else if ( fake.hostname !== window.location.hostname || fake.protocol !== window.location.protocol)
       window.location = href
-    else if ( !openLinkInTab ) {
+    else {
       var h = Router.history
       if ( h && h.length && h[h.length-1].path == href )
         Backbone.history.loadUrl(href)
       else
         Router.navigate(href, true)
     }
+    e.preventDefault()
   }
-  
-  e.preventDefault()
 }
 
 // pass methods and properties to the route
@@ -80,14 +81,20 @@ window.Run = function() {
   var App = React.renderComponent(AppComponent({ 
     models: models,
     clickHandler: clickHandler,
-    onKeyDown: function(e) {
-      if (e.ctrlKey || e.keyCode === 91)
-        openLinkInTab = true
+    downHandler: function(e) {
+      $(e.target).closest('a, button').addClass('down')
     },
-    onKeyUp: function(e) {
-      openLinkInTab = false
+    upHandler: function(e) {
+      $(e.target).closest('a, button').removeClass('down')
     }
   }), node)
+
+  $(document).on('keydown', function(e) {
+    if (e.ctrlKey || e.which === 91)
+      openLinkInTab = true
+  }).on('keyup', function(e) {
+    openLinkInTab = false
+  })
 
   // start router
   Router.on('route', function(name, paths) {

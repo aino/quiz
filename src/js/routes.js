@@ -6,7 +6,13 @@ var models = require('./models')
 var Routes = {
 
   home: function(params) {
-    
+    return
+  },
+  quiz: function(params) {
+    console.log(params)
+  },
+  end: function(params) {
+    console.log('end', params)
   }
 }
 

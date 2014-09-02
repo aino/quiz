@@ -1,27 +1,30 @@
-var koa = require('koa')
-var logger = require('koa-logger')
-var route = require('koa-route')
-var bodyParser = require('koa-body-parser')
-var serve = require('koa-static')
+var express = require('express')
+var http = require('http')
+var consolidate = require('consolidate')
+var routes = require('./routes')
 var config = require('../conf/config')
-var fs = require('co-fs')
+var fs = require('fs')
+var handlebars = require('handlebars')
 
-var app = module.exports = koa()
+var app = express()
 
-app.use(logger())
-app.use(bodyParser())
-app.use(serve( config.public ))
+app.engine( 'html', consolidate.handlebars )
+app.set( 'view engine', 'html' )
+app.set( 'views', __dirname + '/views' )
 
-app.use(route.get('/api/examples', function*() {
-  // ... get object from database
-  this.body = {result: []}
-}))
-
-app.use(function*() {
-  var file = yield fs.readFile( config.public+'index.html' )
-  this.status = 200
-  this.type = 'text/html; charset=utf-8'
-  this.body = file
+// Handlebars partials
+var partialsDir = __dirname + '/views/partials'
+var filenames = fs.readdirSync(partialsDir)
+filenames.forEach(function(filename) {
+  var matches = /^([^.]+).html$/.exec(filename)
+  if (!matches) return
+  var template = fs.readFileSync(partialsDir + '/' + filename, 'utf8')
+  handlebars.registerPartial(matches[1], template)
 })
 
-if (!module.parent) app.listen(config.port);
+app.use(express.static(__dirname + '/../public'))
+app.get('/', routes.index)
+app.get('/:quiz', routes.quiz)
+
+var server = http.createServer(app)
+server.listen(config.port, function() { console.log('Running on port ' + config.port) })

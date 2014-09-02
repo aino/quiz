@@ -3,25 +3,26 @@
 var React = require('react')
 var models = require('../models')
 var RequestFrame = require('ainojs-requestframe')
+var TouchClick = require('ainojs-react-touchclick')
 
 module.exports = React.createClass({
   getInitialState: function() {
     return {
-      time: null,
+      timestamp: null,
       limit: 0,
-      elapsed: 0
+      score: null
     }
   },
   stop: false,
   tick: function() {
     if ( !this.isMounted() )
       return
-    if ( !this.stop && this.state.time !== null ) {
-      var elapsed = Date.now() - this.state.time
-      this.setState({ elapsed: elapsed })
-      if ( elapsed >= this.state.limit ) {
-        this.setState({ time: null, elapsed: 0 }, function() {
-          this.answer(null)
+    if ( !this.stop && this.state.timestamp !== null ) {
+      var score = 1-Math.min(1, (Date.now() - this.state.timestamp)/this.state.limit)
+      this.setState({ score: score })
+      if ( score === 0 ) {
+        this.setState({ timestamp: null }, function() {
+          this.answer()
         })
       }
     }
@@ -29,16 +30,22 @@ module.exports = React.createClass({
   },
   startTimer: function() {
     this.setState({
-      time: Date.now(),
+      timestamp: Date.now(),
       limit: this.props.question.time*1000,
-      elapsed: 0
+      score: 1
     })
   },
   answer: function(guess) {
+    var solution = this.props.question.solution
     this.props.onAnswer({
-      time: 1-Math.min(1, this.state.elapsed/this.state.limit),
-      guess: guess || null,
-      q: this.props.q
+      timescore: this.state.score,
+      score: Number(guess === solution),
+      record: {
+        question: this.props.q,
+        solution: solution,
+        guess: guess,
+        seconds: Math.floor((this.state.limit*this.state.score)/100)/10
+      }
     })
   },
   onButtonClick: function(e) {
@@ -57,13 +64,14 @@ module.exports = React.createClass({
   },
   render: function() {
     var buttons = this.props.question.answers.map(function(a,i) {
-      return <button data-index={i} onClick={this.onButtonClick}>{a}</button>
+      return <TouchClick data-index={i} click={this.onButtonClick} nodeName="button">{a}</TouchClick>
     }, this)
 
     var progressStyles = {
-      width: (100*(this.state.elapsed/this.state.limit)) + '%',
+      width: 100*this.state.score + '%',
       height: 10,
-      backgroundColor: '#000'
+      backgroundColor: '#000',
+      'float': 'right'
     }
 
     return (

@@ -3,6 +3,14 @@
   O = 0
   N = "lib.css app.css lib.js app.js".split(' ')
   b()
+  var s = d.getElementsByTagName('script')
+  var c = d.createElement('style')
+  var t = '#yum{display:none}'
+  if ( c.styleSheet )
+    c.styleSheet.cssText = t
+  else
+    c.appendChild(d.createTextNode(t))
+  s[s.length-1].parentNode.insertBefore(c,s)
   function b() {
     I = /\.css/.test(N[O])
     A = d.createElement(I ? "link" : "script")

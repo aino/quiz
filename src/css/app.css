@@ -1,3 +1,8 @@
-html{ -webkit-font-smoothing: antialiased; }
+html, input, button{ -webkit-font-smoothing: antialiased; }
 * { box-sizing: border-box; }
-html, body{ min-height:100%; }
+html, body{ min-height:100%; background:#e4e5d5;}
+body, input{font: 14px/1.5 Raleway, sans-serif;}
+
+#container{text-align:center;}
+button{border-radius:2px;border:none;font-weight:400;background:#145093;padding: 0 12px;height:30px;color:#e4e5d5;}
+button.down{background:#147d93;}

@@ -9,8 +9,8 @@ var Router = Backbone.Router.extend({
   },
   routes: {
     "": "home",
-    "earth(/:city)(/:area)": "earth",
-    "*notFound": "404"
+    ":quiz": "quiz",
+    ":quiz/end": "end"
   }
 })
 

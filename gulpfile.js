@@ -10,8 +10,6 @@ var concat = require('gulp-concat')
 var cache = require('gulp-cache')
 var supervisor = require('gulp-supervisor')
 var shell = require('shelljs')
-var htmltemplate = require('gulp-template')
-var htmlminify = require('gulp-minify-html')
 var browserify = require('browserify')
 var less = require('gulp-less')
 var es = require('event-stream')
@@ -39,24 +37,10 @@ if ( ~~nodeversion.match(/\d+\.(\d+)/)[1] > 10 ) {
 
 //////////////
 
-// Echo to HTML
-var echo = function(obj) {
-  return gulp.src(config.src + 'html/*.html')
-    .pipe(htmltemplate(obj, {
-      'interpolate': /{{([\s\S]+?)}}/g
-    }))
-    .pipe(htmlminify(opts))
-    .pipe(gulp.dest(config.public))
-}
-
 // Raise error
 var raise = function(err) {
   err = err.stack || err
   gutil.log(err)
-  echo({ 
-    errmsg: '<code style="font-size:14px">'+err+'</code><style>#app{display:none!important}</style>',
-    appname: 'Error'
-  })
 }
 
 // Create Browserify stream
@@ -82,13 +66,6 @@ var gulpBrowserify = function(options, bundleOptions, commands) {
 // create tasks
 
 var task = {}
-
-task.html = function() {
-  return echo({
-    errmsg: '',
-    appname: pjson.name || 'Name your app'
-  })
-}
 
 task.lib = function() {
 
@@ -142,8 +119,6 @@ task.app = function(cb) {
       //.pipe(uglify())
       .pipe(gulp.dest(config.public + 'assets')),
 
-    task.html(),
-
     gulp.src( config.src + 'js/loader.js' )
       .pipe(rename('load'))
       .pipe(uglify({mangle:false}))
@@ -167,7 +142,6 @@ task.assets = function() {
 
 task.watch = function() {
   watch({glob: config.src + 'js/**/*'}, function() { task.app() })
-  watch({glob: config.src + 'html/**/*.html'}, function() { task.html() })
   watch({glob: config.src + 'css/**/*.css'}, function() { task.styles() })
   watch({glob: config.src + 'assets/**/*'}, function() { task.assets() })
 }
@@ -176,7 +150,7 @@ task.supervisor = function() {
   supervisor('server/app.js', {
     args: [],
     watch: [ 'node_modules', 'server', 'conf' ],
-    extensions: [ 'js', 'json' ],
+    extensions: [ 'js', 'json', 'html' ],
     exec: nodepath,
     debug: false,
     harmony: true,
