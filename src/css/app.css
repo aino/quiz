@@ -1,8 +1,26 @@
+
+@blue: #2b5c93;
+@darkblue: #1e3e63;
+@white: #e4e5d5;
+@green: #3c9077;
+@red: #ca525a;
+
 html, input, button{ -webkit-font-smoothing: antialiased; }
 * { box-sizing: border-box; }
-html, body{ min-height:100%; background:#e4e5d5;}
-body, input{font: 14px/1.5 Raleway, sans-serif;}
+html, body{ min-height:100%; background:@white;}
+body, input{font: 500 18px/1.5 Avenir, sans-serif;}
 
-#container{text-align:center;}
-button{border-radius:2px;border:none;font-weight:400;background:#145093;padding: 0 12px;height:30px;color:#e4e5d5;}
-button.down{background:#147d93;}
+#container{text-align:center;max-width:400px;margin: 0 auto}
+
+h1{font-weight:400;}
+
+button{border-radius:3px;border:none;font-weight:600;box-shadow:inset rgba(0,0,0,.06) 0 -17px 0;
+	background:@blue;padding: 0 18px;height:38px;line-height:38px;color:#fff;outline:none;width:150px}
+button.down{background:@darkblue;}
+
+.buttons button{margin: 2px}
+
+.question .bar{height:10px;position:relative}
+.question .bar .progress{position:absolute;top:0;bottom:0;right:0;width:0;}
+
+.circle canvas{width:30px;height:30px}

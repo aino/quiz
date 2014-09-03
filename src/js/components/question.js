@@ -5,6 +5,13 @@ var models = require('../models')
 var RequestFrame = require('ainojs-requestframe')
 var TouchClick = require('ainojs-react-touchclick')
 
+var GREEN = [60,144,119]
+var RED = [202,82,90]
+
+var radius = function( degrees ) {
+  return degrees * ( Math.PI/180 );
+}
+
 module.exports = React.createClass({
   getInitialState: function() {
     return {
@@ -58,28 +65,46 @@ module.exports = React.createClass({
   componentWillUnmount: function() {
     this.stop = true
   },
-  componentDidUpdate: function(prevprops) {
+  componentDidUpdate: function(prevprops, prevstate) {
     if(prevprops.q !== this.props.q)
       this.startTimer()
+    var degrees = this.state.score*360
+    var ctx = this.refs.circle.getDOMNode().getContext('2d')
+    var dim = 60
+    ctx.strokeStyle = 'rgba(0,0,0,.2)';
+    ctx.lineWidth = 3;
+    ctx.clearRect( 0, 0, dim, dim );
+    ctx.beginPath();
+    ctx.arc( dim/2, dim/2, dim/2-2, radius(-90), radius(degrees-90), false );
+    ctx.stroke();
+    ctx.closePath();
   },
   render: function() {
     var buttons = this.props.question.answers.map(function(a,i) {
       return <TouchClick data-index={i} click={this.onButtonClick} nodeName="button">{a}</TouchClick>
     }, this)
 
+    var color = []
+    GREEN.forEach(function(n,i) {
+      color[i] = RED[i] - Math.round(( RED[i]-n )*this.state.score)
+    }, this)
+
     var progressStyles = {
       width: 100*this.state.score + '%',
-      height: 10,
-      backgroundColor: '#000',
-      'float': 'right'
+      backgroundColor: 'rgb('+color.join(',')+')',
     }
 
     return (
-      <div>
+      <div className="question">
         <h1>{this.props.question.title}</h1>
-        {buttons}
-        <div className="bar" style={{height:10, backgroundColor:'#eee'}}>
+        <div className="buttons">
+          {buttons}
+        </div>
+        <div className="bar">
           <div className="progress" style={progressStyles} />
+        </div>
+        <div className="circle">
+          <canvas ref="circle" width="60" height="60"/>
         </div>
       </div>
     )
