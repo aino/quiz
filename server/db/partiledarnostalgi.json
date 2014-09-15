@@ -1,0 +1,20 @@
+{
+  "title": "Partiledarnostalgi",
+  "slug": "partiledarnostalgi",
+  "description": "Vet du vilka partier dessa välkända ansikten en gång representerade? Testa dina politiska historiakunskaper.",
+  "questions": [
+    {
+      "img": "ian.jpg",
+      "title": "Vilket parti representerade denna ståtliga herre?",
+      "s": 2,
+      "time": 10,
+      "answers": ["Centerpartiet", "Vänsterpartiet", "Det Nya Partiet", "Folkpartiet"]
+    },
+    {
+      "title": "Vem är äldst?",
+      "s": 1,
+      "time": 5,
+      "answers": ["David", "Mikko", "Dennis", "Ufug"]
+    }
+  ]
+}

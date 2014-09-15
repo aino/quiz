@@ -10,7 +10,7 @@ var Router = Backbone.Router.extend({
   routes: {
     "": "home",
     ":quiz": "quiz",
-    ":quiz/end": "end"
+    ":quiz/:id": "quiz"
   }
 })
 

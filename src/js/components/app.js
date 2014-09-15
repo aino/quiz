@@ -6,6 +6,10 @@ var TouchClick = require('ainojs-react-touchclick')
 var IntroComponent = require('./intro')
 var OutroComponent = require('./outro')
 var QuestionComponent = require('./question')
+var Ajax = require('../ajax')
+var Router = require('../router')
+var Results = require('../results')
+var models = require('../models')
 
 module.exports = React.createClass({
 
@@ -13,49 +17,36 @@ module.exports = React.createClass({
     return {
       modal: false,
       route: { name: null, params: [] },
-      wasmodal: false,
-      q: null,
-      answers: []
+      wasmodal: false
     }
   },
 
   componentDidMount: function() {
-
     // listen for backbone changes and force update
     // this makes the entire app reactive
-    for( var inst in this.props.models )
-      this.props.models[inst].on('add change remove reset', function() {
+    for( var inst in models )
+      models[inst].on('add change remove reset', function() {
         this.forceUpdate()
       }, this)
 
   },
 
   componentWillUnmount: function() {
-
     // forget the backbone binding
     for( var inst in this.props.models )
-      this.props.models[inst].off(null, null, this)
-  },
-
-  onStart: function(e) {
-    if ( this.state.q === null )
-      this.setState({ q: 0 })
+      models[inst].off(null, null, this)
   },
 
   onAnswer: function(answer) {
-    var a = this.state.answers.slice(0)
-    a.push( answer )
-    this.setState({ 
-      answers: a,
-      q: this.state.q+1
+    models.user.set({ 
+        answers : models.user.get('answers').concat(answer)
     })
+    models.user.trigger('change')
   },
 
   render: function() {
 
     var routeName = this.state.route.name
-
-    console.log(routeName)
 
     // if there is no route name, we can assume that the route hasn't called it's first callback yet
     if ( !routeName )
@@ -64,24 +55,30 @@ module.exports = React.createClass({
     if ( routeName == '404' )
       return <div>404</div>
 
-    var test = models.quizes.getModel({ slug: 'test' })
-    var questions = test.get('questions')
+    var slug = this.state.route.params.paths[0]
+    var quiz = models.quizes.getModel({ slug: slug })
+    
+    var uid = models.user.get('uid')
+
+    var questions = quiz.get('questions')
+    var answers = models.user.get('answers')
+    var n = answers.length
 
     var main
 
-    if ( this.state.q === null )
-      main = <IntroComponent start={this.onStart} quiz={test} />
-    else if (this.state.q < test.get('questions').length )
-      main = <QuestionComponent q={this.state.q} question={questions[this.state.q]} onAnswer={this.onAnswer} />
-    else {
-      var answers = this.state.answers
-      answers.forEach(function(answer) {
-        console.log(answer)
-      })
+    if ( !uid )
+      main = <IntroComponent start={this.onStart} quiz={quiz} slug={slug} />
+    else if ( n < quiz.get('questions').length ) {
+      main = <QuestionComponent slug={slug} q={n} question={questions[n]} onAnswer={this.onAnswer} />
+    } else {
+      main = <h1>Score: <strong>{Results(answers)}</strong></h1>
+      Ajax.post('/api/results', {uid: uid, answers: answers}).success(function(response) {
+        console.log('saved')
+      }.bind(this))
     }
 
     return (
-      <TouchClick click={this.props.clickHandler} down={this.props.downHandler} up={this.props.upHandler}>
+      <TouchClick down={this.props.downHandler} up={this.props.upHandler}>
         {main}
       </TouchClick>
     )

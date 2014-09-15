@@ -72,4 +72,15 @@ var Quizes = BaseCollection.extend({
   model: Quiz
 })
 
+var User = Backbone.Model.extend({
+  defaults: {
+    slug: '',
+    uid: '',
+    answers: []
+  }
+})
+
 exports.quizes = new Quizes()
+exports.user = new User()
+
+

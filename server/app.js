@@ -5,6 +5,7 @@ var routes = require('./routes')
 var config = require('../conf/config')
 var fs = require('fs')
 var handlebars = require('handlebars')
+var bodyParser = require('body-parser')
 
 var app = express()
 
@@ -23,8 +24,18 @@ filenames.forEach(function(filename) {
 })
 
 app.use(express.static(__dirname + '/../public'))
-app.get('/', routes.index)
-app.get('/:quiz', routes.quiz)
+app.use(bodyParser.json())
+
+var router = express.Router()
+
+router.get('/', routes.index)
+router.post('/api/results', routes.results)
+router.get('/api/uid', routes.uid)
+router.get('/api/quiz/:quiz', routes.quizdata)
+router.get('/:quiz/:id', routes.quiz)
+router.get('/:quiz', routes.quiz)
+
+app.use('/', router)
 
 var server = http.createServer(app)
 server.listen(config.port, function() { console.log('Running on port ' + config.port) })

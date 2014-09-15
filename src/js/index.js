@@ -11,8 +11,6 @@ var detect = require('ainojs-detect')
 var Qs = require('qs')
 
 // Temp data
-var QuizData = require('./quiz.json')
-models.quizes.add(QuizData)
 
 Backbone.$ = $
 

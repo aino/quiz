@@ -7,6 +7,7 @@ var TouchClick = require('ainojs-react-touchclick')
 
 var GREEN = [60,144,119]
 var RED = [202,82,90]
+var CIRCLE = 40
 
 var radius = function( degrees ) {
   return degrees * ( Math.PI/180 );
@@ -43,7 +44,7 @@ module.exports = React.createClass({
     })
   },
   answer: function(guess) {
-    var solution = this.props.question.solution
+    var solution = this.props.question.s
     this.props.onAnswer({
       timescore: this.state.score,
       score: Number(guess === solution),
@@ -58,6 +59,12 @@ module.exports = React.createClass({
   onButtonClick: function(e) {
     this.answer(parseInt(e.target.getAttribute('data-index'), 10))
   },
+  onButtonDown: function(e) {
+    e.currentTarget.className = 'selected'
+  },
+  onButtonCancel: function(e) {
+    e.currentTarget.className = ''
+  },
   componentDidMount: function() {
     this.startTimer()
     this.tick()
@@ -65,46 +72,57 @@ module.exports = React.createClass({
   componentWillUnmount: function() {
     this.stop = true
   },
-  componentDidUpdate: function(prevprops, prevstate) {
-    if(prevprops.q !== this.props.q)
-      this.startTimer()
-    var degrees = this.state.score*360
-    var ctx = this.refs.circle.getDOMNode().getContext('2d')
-    var dim = 60
-    ctx.strokeStyle = 'rgba(0,0,0,.2)';
-    ctx.lineWidth = 3;
-    ctx.clearRect( 0, 0, dim, dim );
-    ctx.beginPath();
-    ctx.arc( dim/2, dim/2, dim/2-2, radius(-90), radius(degrees-90), false );
-    ctx.stroke();
-    ctx.closePath();
-  },
-  render: function() {
-    var buttons = this.props.question.answers.map(function(a,i) {
-      return <TouchClick data-index={i} click={this.onButtonClick} nodeName="button">{a}</TouchClick>
-    }, this)
-
+  getColor: function() {
     var color = []
     GREEN.forEach(function(n,i) {
       color[i] = RED[i] - Math.round(( RED[i]-n )*this.state.score)
     }, this)
-
-    var progressStyles = {
-      width: 100*this.state.score + '%',
-      backgroundColor: 'rgb('+color.join(',')+')',
+    return 'rgb('+color.join(',')+')'
+  },
+  componentDidUpdate: function(prevprops, prevstate) {
+    if(prevprops.q !== this.props.q)
+      this.startTimer()
+    var degrees = 360 - (this.state.score*360)
+    var ctx = this.refs.circle.getDOMNode().getContext('2d')
+    var dim = CIRCLE*2
+    ctx.strokeStyle = this.getColor()
+    ctx.lineWidth = 3
+    ctx.clearRect( 0, 0, dim, dim )
+    ctx.beginPath()
+    ctx.arc( dim/2, dim/2, dim/2-2, radius(-90), radius(degrees-90), false )
+    ctx.stroke()
+    ctx.closePath()
+    if ( prevprops.q !== this.props.q ) {
+      ;[].forEach.call(document.querySelectorAll('button'), function(btn) {
+        btn.className = ''
+      })
     }
+  },
+  render: function() {
+    var buttons = this.props.question.answers.map(function(a,i) {
+      return <TouchClick data-index={i} click={this.onButtonClick} down={this.onButtonDown} cancel={this.onButtonCancel} nodeName="button">{a}</TouchClick>
+    }, this)
+
+    var s = (this.state.limit * this.state.score)/1000
+    s = s.toFixed( 1 )
+    if ( s.length == 1 )
+      s += '.0'
+
+    var src = this.props.question.img
+    var img
+    if ( src )
+      img = <div className="image"><img src={'/assets/quizimg/'+this.props.slug+'/'+src} /></div>
 
     return (
       <div className="question">
+        {img}
         <h1>{this.props.question.title}</h1>
         <div className="buttons">
           {buttons}
         </div>
-        <div className="bar">
-          <div className="progress" style={progressStyles} />
-        </div>
         <div className="circle">
-          <canvas ref="circle" width="60" height="60"/>
+          <canvas ref="circle" width={CIRCLE*2} height={CIRCLE*2} style={{width:CIRCLE,height:CIRCLE}} />
+          <div className="counter" style={{color:this.getColor()}}>{s}</div>
         </div>
       </div>
     )

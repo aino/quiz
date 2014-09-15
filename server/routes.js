@@ -1,13 +1,89 @@
 var fs = require('fs')
 var _ = require('underscore')
+var redis = require('redis')
+var config = require('../conf/config')
+var results = require('../src/js/results')
 
-var seo = function(req, quiz) {
+var db = redis.createClient()
+db.on('error', function(err) {
+  throw err
+})
+
+var seo = function(req, obj) {
   var base = req.protocol + '://' + req.get('host')
   return {
-    title: quiz.name,
+    title: obj.title,
+    description: obj.description || '',
     url: base + req.originalUrl,
-    image: ''
+    image: obj.image || ''
   }
+}
+
+var createUid = function(cb) {
+  var generate = function() {
+    return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random()*16|0
+      var v = c == 'x' ? r : (r&0x3|0x8)
+      return v.toString(16)
+    })
+  }
+  var tries = 0
+  var check = function() {
+    if ( ++tries == 500 )
+      throw 'Max tries for uid'
+    var uid = generate()
+    db.get(uid, function(err, reply) {
+      if ( err ) 
+        throw err
+      if ( reply === null )
+        cb(uid)
+      else
+        check()
+    })
+  }
+  db.select(config.redis, function(err) {
+    if ( err ) 
+      throw err
+    check()
+  })  
+}
+
+exports.quizdata = function(req, res, next) {
+  var quiz = req.params.quiz
+  if ( !quiz )
+    throw 'No slug'
+  fs.readFile(__dirname + '/db/' + quiz + '.json', function(err, data) {
+    if ( err )
+      throw err
+    res.json({
+      quiz: JSON.parse(data.toString())
+    })
+  })
+}
+
+exports.results = function(req, res, next) {
+  db.select(config.redis, function(err) {
+    if ( err ) 
+      throw err
+    var body = req.body
+    db.set(body.uid, JSON.stringify(body.answers), function(err, reply) {
+      if ( err )
+        throw err
+      res.json(body)
+    })
+  })
+}
+
+exports.uid = function(req, res, next) {
+  createUid(function(uid) {
+    db.set(uid, JSON.stringify([]), function(err, reply) {
+      if ( err )
+        throw err
+      res.json({
+        uid: uid
+      })
+    })
+  })
 }
 
 exports.index = function(req, res, next) {
@@ -27,14 +103,34 @@ exports.index = function(req, res, next) {
 
 exports.quiz = function(req, res, next) {
   var slug = req.params.quiz
+  var id = req.params.id
   fs.readFile(__dirname + '/db/' + slug + '.json', function(err, data) {
     if ( err )
-      res.send(404)
+      res.status(404).end()
     var quiz = JSON.parse(data.toString())
-    res.render('quiz', {
-      quiz: quiz,
-      seo: seo(req, quiz),
-      title: quiz.name
-    })
+    if ( id ) {
+      db.select(config.redis, function(err) {
+        if ( err ) 
+          throw err
+        db.get(id, function(err, reply) {
+          if ( err ) 
+            throw err
+          var answers = JSON.parse(reply)
+          res.render('quiz', {
+            quiz: quiz,
+            seo: seo(req, {
+              title: 'Score: ' + results(answers) // todo: define SEO tags for clickbate
+            }),
+            title: quiz.title
+          })
+        })
+      })
+    } else {
+      res.render('quiz', {
+        quiz: quiz,
+        seo: seo(req, quiz),
+        title: quiz.title
+      })
+    }
   })
 }

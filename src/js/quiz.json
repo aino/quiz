@@ -1,19 +1,19 @@
 {
-  "name": "Test Quiz",
+  "title": "Test Quiz",
   "slug": "test",
   "description": "Är du en bra människa? Testa dig här",
   "questions": [
     {
       "title": "Vem är bäst?",
-      "solution": 0,
-      "time": 3,
-      "answers": ["David", "Mikko", "jesper", "jakob"]
+      "s": 0,
+      "time": 30,
+      "answers": ["David", "Mikko", "Jesper", "John"]
     },
     {
       "title": "Vem är äldst?",
-      "solution": 1,
+      "s": 1,
       "time": 5,
-      "answers": ["David", "Mikko", "jesper", "jakob"]
+      "answers": ["David", "Mikko", "Dennis", "Ufug"]
     }
   ]
 }
