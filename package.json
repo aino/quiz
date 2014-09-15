@@ -12,7 +12,7 @@
     "backbone": "~1.1.2",
     "co-fs": "^1.2.0",
     "ainojs-detect": "^1.0.1",
-    "ainojs-react-touchclick": "^1.0.5",
+    "ainojs-react-touchclick": "^1.0.7",
     "qs": "^1.2.2",
     "ainojs-requestframe": "^1.0.0",
     "express": "^4.8.7",

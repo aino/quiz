@@ -9,6 +9,7 @@ var AppComponent = require('./components/app')
 var models = require('./models')
 var detect = require('ainojs-detect')
 var Qs = require('qs')
+var globals = require('./globals')
 
 // Temp data
 
@@ -70,6 +71,8 @@ var scrollBack = function() {
   window.scrollTo(0,0)
 }
 
+var goingBack = false
+
 // expose a Run method instead of module for browser loader
 window.Run = function() {
 
@@ -114,40 +117,57 @@ window.Run = function() {
     // detect backbutton and save crumbs
     var fragment = Backbone.history.getFragment()
     var backbutton = Backbone.history.backbutton = !clicked && crumbs.length > 1 && fragment == crumbs[crumbs.length-2]
+    var proceed = function() {
 
-    if(!history.length || detect.touch)
-      route.isModal = false
+      if(!history.length || detect.touch)
+        route.isModal = false
 
-    history.push({
-      name: name,
-      params: params,
-      path: window.location.pathname,
-      modal: route.isModal
-    })
-
-    var wasModal = ( history.length > 2 && history[history.length-2].modal )
-
-    if ( route.isModal ) {
-      App.setState({ modal: true, wasmodal: false })
-    } else {
-      if (!wasModal)
-        scrollBack()
-      node.className = name
-      App.setState({
-        modal: route.isModal,
-        wasmodal: wasModal,
-        route: {
-          name: name,
-          params: params
-        }
+      history.push({
+        name: name,
+        params: params,
+        path: window.location.pathname,
+        modal: route.isModal
       })
+
+      var wasModal = ( history.length > 2 && history[history.length-2].modal )
+
+      if ( route.isModal ) {
+        App.setState({ modal: true, wasmodal: false })
+      } else {
+        if (!wasModal)
+          scrollBack()
+        node.className = name
+        App.setState({
+          modal: route.isModal,
+          wasmodal: wasModal,
+          route: {
+            name: name,
+            params: params
+          }
+        })
+      }
+
+      clicked = false
+      if ( backbutton )
+        crumbs.splice(-2,2)
+      crumbs.push(fragment)
     }
 
-    clicked = false
-    if ( backbutton )
-      crumbs.splice(-2,2)
-    crumbs.push(fragment)
-
+    var msg = globals.getUnloadMessage()
+    if ( backbutton && msg && !goingBack ) {
+      if ( window.confirm(msg) ) {
+        models.user.set(models.user.defaults)
+        proceed()
+      }
+      else {
+        Backbone.history.history.go(1)
+        crumbs.splice(-1,1)
+        goingBack = true
+      }
+    } else {
+      goingBack = false
+      proceed()
+    }
   })
 
   Backbone.history.start({pushState: true})

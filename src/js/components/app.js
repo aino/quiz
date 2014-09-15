@@ -10,6 +10,7 @@ var Ajax = require('../ajax')
 var Router = require('../router')
 var Results = require('../results')
 var models = require('../models')
+var globals = require('../globals')
 
 module.exports = React.createClass({
 
@@ -35,6 +36,7 @@ module.exports = React.createClass({
     // forget the backbone binding
     for( var inst in this.props.models )
       models[inst].off(null, null, this)
+    PubSub.off(this.backToken)
   },
 
   onAnswer: function(answer) {
@@ -56,6 +58,7 @@ module.exports = React.createClass({
       return <div>404</div>
 
     var slug = this.state.route.params.paths[0]
+    var slugid = this.state.route.params.paths[1]
     var quiz = models.quizes.getModel({ slug: slug })
     
     var uid = models.user.get('uid')
@@ -66,12 +69,16 @@ module.exports = React.createClass({
 
     var main
 
-    if ( !uid )
+    if ( !uid || uid !== slugid ) {
+      globals.clearUnload()
       main = <IntroComponent start={this.onStart} quiz={quiz} slug={slug} />
+    }
     else if ( n < quiz.get('questions').length ) {
       main = <QuestionComponent slug={slug} q={n} question={questions[n]} onAnswer={this.onAnswer} />
+      globals.setUnloadMessage(function() { return 'Är du säker på att du vill avbryta ditt quiz?' })
     } else {
       main = <h1>Score: <strong>{Results(answers)}</strong></h1>
+      globals.clearUnload()
       Ajax.post('/api/results', {uid: uid, answers: answers}).success(function(response) {
         console.log('saved')
       }.bind(this))

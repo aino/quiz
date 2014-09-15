@@ -62,7 +62,7 @@ module.exports = React.createClass({
   onButtonDown: function(e) {
     e.currentTarget.className = 'selected'
   },
-  onButtonCancel: function(e) {
+  onButtonUp: function(e) {
     e.currentTarget.className = ''
   },
   componentDidMount: function() {
@@ -92,15 +92,10 @@ module.exports = React.createClass({
     ctx.arc( dim/2, dim/2, dim/2-2, radius(-90), radius(degrees-90), false )
     ctx.stroke()
     ctx.closePath()
-    if ( prevprops.q !== this.props.q ) {
-      ;[].forEach.call(document.querySelectorAll('button'), function(btn) {
-        btn.className = ''
-      })
-    }
   },
   render: function() {
     var buttons = this.props.question.answers.map(function(a,i) {
-      return <TouchClick data-index={i} click={this.onButtonClick} down={this.onButtonDown} cancel={this.onButtonCancel} nodeName="button">{a}</TouchClick>
+      return <TouchClick data-index={i} click={this.onButtonClick} down={this.onButtonDown} up={this.onButtonUp} nodeName="button">{a}</TouchClick>
     }, this)
 
     var s = (this.state.limit * this.state.score)/1000

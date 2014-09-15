@@ -104,10 +104,10 @@ exports.index = function(req, res, next) {
 exports.quiz = function(req, res, next) {
   var slug = req.params.quiz
   var id = req.params.id
-  fs.readFile(__dirname + '/db/' + slug + '.json', function(err, data) {
+  fs.readFile(__dirname + '/db/' + slug + '.json', 'utf8', function(err, quiz) {
     if ( err )
       res.status(404).end()
-    var quiz = JSON.parse(data.toString())
+
     if ( id ) {
       db.select(config.redis, function(err) {
         if ( err ) 
