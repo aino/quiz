@@ -16,14 +16,16 @@ module.exports = React.createClass({
   },
   componentDidMount: function() {
     models.user.set(models.user.defaults)
+    this.start()
   },
   render: function() {
+    return <div />
     return (
       <div>
         <h1>{this.props.quiz.get('title')}</h1>
         <p>{this.props.quiz.get('description')}</p>
         <div className="start">
-          <TouchClick nodeName="button" click={this.start}>Start</TouchClick>
+          <TouchClick nodeName="button" className="start" click={this.start}>Starta Quiz</TouchClick>
         </div>
       </div>
     )

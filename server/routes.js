@@ -116,6 +116,7 @@ exports.quiz = function(req, res, next) {
           if ( err ) 
             throw err
           var answers = JSON.parse(reply)
+          console.log(answers, reply)
           res.render('quiz', {
             quiz: quiz,
             seo: seo(req, {
