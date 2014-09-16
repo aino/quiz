@@ -156,7 +156,6 @@ window.Run = function() {
     var msg = globals.getUnloadMessage()
     if ( backbutton && msg && !goingBack ) {
       if ( window.confirm(msg) ) {
-        models.user.set(models.user.defaults)
         proceed()
       }
       else {

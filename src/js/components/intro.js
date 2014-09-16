@@ -14,6 +14,9 @@ module.exports = React.createClass({
     models.user.set('uid', response.uid)
     Router.navigate('/'+this.props.slug+'/'+response.uid, true)
   },
+  componentDidMount: function() {
+    models.user.set(models.user.defaults)
+  },
   render: function() {
     return (
       <div>
