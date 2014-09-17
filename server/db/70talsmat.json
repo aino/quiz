@@ -1,0 +1,14 @@
+{
+  "title": "70-tals mat",
+  "slug": "70talsmat",
+  "img": "ski.jpg",
+  "description": "Kan du din bruna 70-tals mat? Frossa i klassikerna och se hur många du kan!",
+  "questions": [
+    {
+      "img": "jkb.jpg",
+      "s": 3,
+      "time": 8,
+      "answers": ["Afrikana", "Jansson Frestelse", "Aladob", "Flygande Jakob"]
+    }
+  ]
+}

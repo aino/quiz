@@ -110,7 +110,7 @@ exports.quiz = function(req, res, next) {
       res.status(404).end()
 
     if ( !quiz )
-      res.end()
+      return res.end()
 
     if ( id ) {
       db.select(config.redis, function(err) {

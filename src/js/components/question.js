@@ -114,15 +114,15 @@ module.exports = React.createClass({
     return (
       <div className="question">
         {img}
-        <h1>{this.props.question.title}</h1>
-        <div className="buttons">
-          {buttons}
-        </div>
         <div className="bar">
           <div>
             <div className="progress" style={{backgroundColor: this.getColor(), width: perc}}/>
             <div className="anim" />
           </div>
+        </div>
+        <h1>{this.props.question.title}</h1>
+        <div className="buttons">
+          {buttons}
         </div>
         {/*
         <div className="circle">

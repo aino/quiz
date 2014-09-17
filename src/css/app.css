@@ -33,18 +33,18 @@ button.start.down{background:@grey}
 .question{height:100%}
 
 .question h1{font-size:20px;line-height:22px}
-.question .bar{height:12px;position:absolute;bottom:10px;left:10px;right:10px}
-.question .bar>div{position:relative;margin: 0 1%;height:100%}
-.question .bar .progress{position:absolute;top:0;bottom:0;right:0;width:100%;border-radius:2px;}
+.question .bar{height:8px;background:rgb(10,10,10)}
+.question .bar>div{position:relative;height:100%}
+.question .bar .progress{position:absolute;top:0;bottom:0;right:0;width:100%;border-radius:0;}
 .question .bar .anim{position:absolute;top:0;bottom:0;right:0;width:100%;opacity:.7;
 	background-size: 15px 15px;
 	background-image: linear-gradient(
 	  45deg, 
-	  rgba(240,239,233,0.1) 25%, 
+	  rgba(10,10,10,0.1) 25%, 
 	  transparent 25%, 
 	  transparent 50%, 
-	  rgba(240,239,233,0.1) 50%, 
-	  rgba(240,239,233,0.1) 75%, 
+	  rgba(10,10,10,0.1) 50%, 
+	  rgba(10,10,10,0.1) 75%, 
 	  transparent 75%, 
 	  transparent
 	);
@@ -53,12 +53,16 @@ button.start.down{background:@grey}
 .question .bar .lines{position:absolute;top:0;left:0;right:0;bottom:0}
 .question .bar .lines i{position:absolute;left:0;border-left:1px solid @white;display:block;height:100%}
 
+.intro{position:relative;top:0;}
+.intro h1{padding:20px 0 16px;font-weight:bold}
+.intro p{margin:0;padding: 0 12px 22px}
+
 .circle{position:relative;width:40px;height:40px;margin:20px auto 0}
 .circle canvas{width:40px;height:40px;position:absolute;left:0}
 .circle .counter{positon:absolute;width:40px;height:40px;top:0;left:0;line-height:40px;text-align:center;font-size:11px;font-weight:600}
 
-.image{width:100%;height:0;padding-bottom:75%}
-.image img{position:absolute;left:0;top:0;width:100%}
+.image{width:100%;height:0;padding-bottom:75%;overflow:hidden;position:relative}
+.image img{position:absolute;left:0;top:0;max-width:100%}
 
 @-webkit-keyframes barberpole {
   from { background-position: 0 0; }

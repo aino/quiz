@@ -18,7 +18,9 @@
     "express": "^4.8.7",
     "consolidate": "^0.10.0",
     "redis": "^0.12.1",
-    "body-parser": "^1.8.1"
+    "body-parser": "^1.8.1",
+    "ainojs-animation": "^1.1.1",
+    "ainojs-easing": "^1.0.1"
   },
   "devDependencies": {
     "gulp": "~3.6.0",
