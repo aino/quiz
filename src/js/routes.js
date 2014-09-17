@@ -11,7 +11,18 @@ var Routes = {
   },
   quiz: function(params) {
     Ajax.get('/api/quiz/'+params.paths[0]).success(function(response) {
-      models.quizes.add(response.quiz)
+      var quiz = response.quiz
+      quiz.questions = quiz.questions.map(function(q) {
+        q.answers = q.answers.map(function(a,i) {
+          return {
+            a:a,
+            i:i
+          }
+        }.bind(this))
+        q.answers.sort(function() { return .5 - Math.random() })
+        return q
+      })
+      models.quizes.add(quiz)
     })
   }
 }

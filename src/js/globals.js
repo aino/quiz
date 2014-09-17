@@ -4,7 +4,7 @@ var unloadMessage = ''
 exports.setUnloadMessage = function(getMessage) {
   if ( typeof getMessage == 'function' )
     unloadMessage = getMessage()
-    window.onbeforeunload = getMessage
+    //window.onbeforeunload = getMessage
 }
 
 exports.getUnloadMessage = function() {

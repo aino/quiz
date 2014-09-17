@@ -7,13 +7,13 @@
       "img": "ian.jpg",
       "title": "Vilket parti representerade denna ståtliga herre?",
       "s": 2,
-      "time": 50,
+      "time": 8,
       "answers": ["Centerpartiet", "Vänsterpartiet", "Det Nya Partiet", "Folkpartiet"]
     },
     {
       "title": "Vem är äldst?",
       "s": 1,
-      "time": 50,
+      "time": 5,
       "answers": ["David", "Mikko", "Dennis", "Ufug"]
     }
   ]

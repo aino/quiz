@@ -87,6 +87,9 @@ window.Run = function() {
     },
     upHandler: function(e) {
       $(e.target).closest('a, button').removeClass('down')
+    },
+    setBodyClass: function(cl) {
+      document.body.className = cl
     }
   }), node)
 

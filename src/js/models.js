@@ -65,7 +65,10 @@ var BaseCollection = Backbone.Collection.extend({
 })
 
 var Quiz = Backbone.Model.extend({
-  defaults: {}
+  defaults: {},
+  getQuestion: function(n) {
+    return this.get('questions')[n]
+  }
 })
 
 var Quizes = BaseCollection.extend({

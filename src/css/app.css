@@ -2,39 +2,68 @@
 @blue: #2b5c93;
 @darkblue: #1e3e63;
 @grey: #333330;
-@white: #e4e5d5;
+@white: #f0efe9;
 @green: #3c9077;
 @red: #ca525a;
 
 html, input, button{ -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: rgba(0,0,0,0); }
 * { box-sizing: border-box; }
-html, body{ min-height:100%; background:@white;}
+html, body{ height:100%;overflow:hidden;margin:0;padding:0}
+body{ background:@white;}
 body, input{font: 500 18px/1.3 Avenir, sans-serif;}
 
+#container{text-align:center;max-width:400px;margin: 0 auto;height:100%;max-height:700px;position:relative}
 
-#container{text-align:center;max-width:400px;margin: 0 auto}
-
-h1{font-weight:500;font-size:28px;line-height:30px;letter-spacing:-0.5px;padding: 0 12px}
+h1{font-weight:500;font-size:28px;line-height:30px;letter-spacing:-0.5px;padding: 12px;margin:0}
 p{padding: 0 12px}
 
 button{border-radius:3px;border:none;font-weight:600;box-shadow:inset rgba(0,0,0,.06) 0 -19px 0;font-size:14px;
-	background:@blue;padding: 0 18px;height:38px;line-height:38px;color:#fff;outline:none;width:150px}
+	background:@blue;padding: 0 18px;height:38px;line-height:38px;color:#fff;outline:none;}
 
 button.selected{background:@grey}
 
 button.start{background:@green;font-size:18px;font-weight:800;padding:0 22px;height:44px;line-height:44px;width:200px}
 button.start.down{background:@grey}
 
-.buttons button{margin: 2px}
+.buttons{overflow:hidden;margin:10px}
+.buttons button{margin:1%;width:48%}
 
-.question .bar{height:10px;position:relative}
-.question .bar .progress{position:absolute;top:0;bottom:0;right:0;width:0;}
+#app,
+#app>div,
+.question{height:100%}
+
+.question h1{font-size:20px;line-height:22px}
+.question .bar{height:12px;position:absolute;bottom:10px;left:10px;right:10px}
+.question .bar>div{position:relative;margin: 0 1%;height:100%}
+.question .bar .progress{position:absolute;top:0;bottom:0;right:0;width:100%;border-radius:2px;}
+.question .bar .anim{position:absolute;top:0;bottom:0;right:0;width:100%;opacity:.7;
+	background-size: 15px 15px;
+	background-image: linear-gradient(
+	  45deg, 
+	  rgba(240,239,233,0.1) 25%, 
+	  transparent 25%, 
+	  transparent 50%, 
+	  rgba(240,239,233,0.1) 50%, 
+	  rgba(240,239,233,0.1) 75%, 
+	  transparent 75%, 
+	  transparent
+	);
+	-webkit-animation: barberpole 1s linear infinite;
+}
+.question .bar .lines{position:absolute;top:0;left:0;right:0;bottom:0}
+.question .bar .lines i{position:absolute;left:0;border-left:1px solid @white;display:block;height:100%}
 
 .circle{position:relative;width:40px;height:40px;margin:20px auto 0}
 .circle canvas{width:40px;height:40px;position:absolute;left:0}
 .circle .counter{positon:absolute;width:40px;height:40px;top:0;left:0;line-height:40px;text-align:center;font-size:11px;font-weight:600}
-.image{max-width:100%}
-.image img{max-width:100%}
+
+.image{width:100%;height:0;padding-bottom:75%}
+.image img{position:absolute;left:0;top:0;width:100%}
+
+@-webkit-keyframes barberpole {
+  from { background-position: 0 0; }
+  to   { background-position: 0px 15px; }
+}
 
 @media only screen and (min-width: 420px) {
   #container{max-width:600px}

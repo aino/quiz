@@ -67,21 +67,27 @@ module.exports = React.createClass({
     var answers = models.user.get('answers')
     var n = answers.length
 
+    if ( !questions )
+      return <div className="loading" />
+
     var main
 
     if ( !uid || uid !== slugid ) {
       globals.clearUnload()
+      this.props.setBodyClass('')
       main = <IntroComponent start={this.onStart} quiz={quiz} slug={slug} />
     }
     else if ( n < quiz.get('questions').length ) {
-      main = <QuestionComponent slug={slug} q={n} question={questions[n]} onAnswer={this.onAnswer} />
+      main = <QuestionComponent slug={slug} q={n} question={quiz.getQuestion(n)} onAnswer={this.onAnswer} />
       globals.setUnloadMessage(function() { return 'Är du säker på att du vill avbryta ditt quiz?' })
+      this.props.setBodyClass('rolling')
     } else {
       main = <h1>Score: <strong>{Results(answers)}</strong></h1>
       globals.clearUnload()
       Ajax.post('/api/results', {uid: uid, answers: answers}).success(function(response) {
         console.log('saved')
       }.bind(this))
+      this.props.setBodyClass('')
     }
 
     return (

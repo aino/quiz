@@ -6,7 +6,7 @@ var RequestFrame = require('ainojs-requestframe')
 var TouchClick = require('ainojs-react-touchclick')
 
 var GREEN = [60,144,119]
-var RED = [202,82,90]
+var RED = [245,10,10]
 var CIRCLE = 40
 
 var radius = function( degrees ) {
@@ -82,6 +82,7 @@ module.exports = React.createClass({
   componentDidUpdate: function(prevprops, prevstate) {
     if(prevprops.q !== this.props.q)
       this.startTimer()
+    /*
     var degrees = 360 - (this.state.score*360)
     var ctx = this.refs.circle.getDOMNode().getContext('2d')
     var dim = CIRCLE*2
@@ -92,16 +93,18 @@ module.exports = React.createClass({
     ctx.arc( dim/2, dim/2, dim/2-2, radius(-90), radius(degrees-90), false )
     ctx.stroke()
     ctx.closePath()
+    */
   },
   render: function() {
-    var buttons = this.props.question.answers.map(function(a,i) {
-      return <TouchClick data-index={i} click={this.onButtonClick} down={this.onButtonDown} up={this.onButtonUp} nodeName="button">{a}</TouchClick>
+    var buttons = this.props.question.answers.map(function(answer) {
+      return <TouchClick data-index={answer.i} click={this.onButtonClick} down={this.onButtonDown} up={this.onButtonUp} nodeName="button">{answer.a}</TouchClick>
     }, this)
 
     var s = (this.state.limit * this.state.score)/1000
     s = s.toFixed( 1 )
     if ( s.length == 1 )
       s += '.0'
+    var perc = (this.state.score*100)+'%'
 
     var src = this.props.question.img
     var img
@@ -115,10 +118,18 @@ module.exports = React.createClass({
         <div className="buttons">
           {buttons}
         </div>
+        <div className="bar">
+          <div>
+            <div className="progress" style={{backgroundColor: this.getColor(), width: perc}}/>
+            <div className="anim" />
+          </div>
+        </div>
+        {/*
         <div className="circle">
           <canvas ref="circle" width={CIRCLE*2} height={CIRCLE*2} style={{width:CIRCLE,height:CIRCLE}} />
           <div className="counter" style={{color:this.getColor()}}>{s}</div>
         </div>
+        */}
       </div>
     )
   }

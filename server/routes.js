@@ -11,8 +11,9 @@ db.on('error', function(err) {
 
 var seo = function(req, obj) {
   var base = req.protocol + '://' + req.get('host')
+  obj = obj || {}
   return {
-    title: obj.title,
+    title: obj.title || 'Quiz',
     description: obj.description || '',
     url: base + req.originalUrl,
     image: obj.image || ''
@@ -108,6 +109,9 @@ exports.quiz = function(req, res, next) {
     if ( err )
       res.status(404).end()
 
+    if ( !quiz )
+      res.end()
+
     if ( id ) {
       db.select(config.redis, function(err) {
         if ( err ) 
@@ -115,8 +119,7 @@ exports.quiz = function(req, res, next) {
         db.get(id, function(err, reply) {
           if ( err ) 
             throw err
-          var answers = JSON.parse(reply)
-          console.log(answers, reply)
+          var answers = reply ? JSON.parse(reply) : []
           res.render('quiz', {
             quiz: quiz,
             seo: seo(req, {
