@@ -10,21 +10,14 @@ var $ = require('jquery')
 var Easing = require('ainojs-easing')
 var RequestFrame = require('ainojs-requestframe')
 
-var Slider = new Animation({
-  duration: 600,
-  easing: Easing('easeOutQuart')
-})
-
-var Counter = new Animation({
-  duration: 400,
-  easing: Easing('easeOutQuart')
-})
-
-var timestamp
-var uid
 var TIME = 3
 
 module.exports = React.createClass({
+
+  slider: null,
+  counter: null,
+  uid: null,
+
   getInitialState: function() {
     return {
       loading: true,
@@ -66,12 +59,14 @@ module.exports = React.createClass({
       this.onCountdownFinish()
   },
   onAjax: function(response) {
-    uid = response.uid
-    models.user.set('uid', uid)
-    Slider.config.easing = Easing('easeInCubic')
-    Slider.duration = 400
+    this.uid = response.uid
+    models.user.set('uid', this.uid)
+    this.slider.setOptions({
+      easing: Easing('easeInCubic'),
+      duration: 400
+    })
     setTimeout(this.onSliderComplete, 250)
-    Slider.animateTo({
+    this.slider.animateTo({
       top: -this.getHeight(),
       opacity: 0
     })
@@ -88,8 +83,17 @@ module.exports = React.createClass({
     this.onCounterComplete()
   },
   componentDidMount: function() {
-    models.user.set(models.user.defaults)
 
+    models.user.set(models.user.defaults)
+    //
+    /*
+    Ajax.get('/api/uid', []).success(function(response) {
+      models.user.set('uid', response.uid)
+      Router.navigate('/'+this.props.slug+'/'+response.uid, true)
+    }.bind(this))
+    return
+    */
+    //
     var q = this.props.quiz.get('questions')
     var im = q.filter(function(a) {
       return a.img
@@ -102,13 +106,31 @@ module.exports = React.createClass({
       })
     }, this)
 
+    if ( this.slider )
+      this.slider.destroy()
+
+    if ( this.counter )
+      this.counter.destroy()
+
+    this.slider = new Animation({
+      duration: 600,
+      easing: Easing('easeOutQuart')
+    })
+
+    this.counter = new Animation({
+      duration: 400,
+      easing: Easing('easeOutQuart')
+    })
+
+    this.uid = null
+
     setTimeout(function() {
       if ( this.isMounted() ) {
         this.setState({
           firstLoad: true,
           top: -this.getHeight()
         }, function() {
-          Slider.init({
+          this.slider.init({
             top: this.state.top,
             opacity: 0
           }).animateTo({
@@ -119,12 +141,14 @@ module.exports = React.createClass({
       }
     }.bind(this), 400)
 
-    Slider.on('frame', this.onSliderFrame)
-    Counter.on('frame', this.onCounterFrame)
+    this.slider.on('frame', this.onSliderFrame)
+    this.counter.on('frame', this.onCounterFrame)
+
   },
   componentWillUnmount: function() {
-    Slider.destroy()
-    Counter.destroy()
+    this.slider && this.slider.destroy()
+    this.counter && this.counter.destroy()
+    this.uid = null
   },
   onSliderFrame: function(e) {
     this.setState(e.values)
@@ -133,12 +157,12 @@ module.exports = React.createClass({
     this.setState(e.values)
   },
   onCounterComplete: function() {
-    Router.navigate('/'+this.props.slug+'/'+uid, true)
+    Router.navigate('/'+this.props.slug+'/'+this.uid, true)
   },
   onSliderComplete: function() {
     timer = +new Date()
     this.tick()
-    Counter.init({ 
+    this.counter.init({ 
       countTop: this.state.countTop,
       countOpacity: this.state.countOpacity
     }).animateTo({

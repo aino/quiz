@@ -26,9 +26,6 @@ button.selected{background:@grey}
 button.start{background:@green;font-size:18px;font-weight:800;padding:0 22px;height:44px;line-height:44px;width:200px}
 button.start.down{background:@grey}
 
-.buttons{overflow:hidden;margin:10px}
-.buttons button{margin:1%;width:48%}
-
 #app,
 #app>div,
 .question{height:100%}
@@ -38,20 +35,24 @@ button.start.down{background:@grey}
 .countdown>span{display:block;font-size:16px;padding:0 24px;color:@lightgrey}
 .countdown .no{display:block;font-size:140px;margin: 0;letter-spacing:-4px;line-height:140px}
 
-
-.question h1{font-size:20px;line-height:22px}
-.question .bar{height:8px;background:rgb(10,10,10)}
-.question .bar>div{position:relative;height:100%}
-.question .bar .progress{position:absolute;top:0;bottom:0;right:0;width:100%;border-radius:0;}
+.question .image{background:rgba(0,0,0,.1)}
+.question .title{height:90px;position:relative}
+.question .title h1{font-size:20px;line-height:22px;padding:0;position: absolute;
+  top: 50%;transform: translateY(-50%); left:10px; right:10px}
+.question .buttons{overflow:hidden;margin:0 10px}
+.question .buttons button{margin:1%;width:48%}
+.question .bar{height:8px;margin:10px}
+.question .bar>div{position:relative;height:100%;margin: 0 1%}
+.question .bar .progress{position:absolute;top:0;bottom:0;right:0;width:100%;border-radius:2px;}
 .question .bar .anim{position:absolute;top:0;bottom:0;right:0;width:100%;opacity:.7;
 	background-size: 15px 15px;
 	background-image: linear-gradient(
 	  45deg, 
-	  rgba(10,10,10,0.1) 25%, 
+	  rgba(240,239,233,0.1) 25%, 
 	  transparent 25%, 
 	  transparent 50%, 
-	  rgba(10,10,10,0.1) 50%, 
-	  rgba(10,10,10,0.1) 75%, 
+	  rgba(240,239,233,0.1) 50%, 
+	  rgba(240,239,233,0.1) 75%, 
 	  transparent 75%, 
 	  transparent
 	);
@@ -77,6 +78,6 @@ button.start.down{background:@grey}
 }
 
 @media only screen and (min-width: 420px) {
-  #container{max-width:600px}
+  #container{max-width:540px}
   button{font-size:16px;width:200px;height:42px;line-height:42px}
 }

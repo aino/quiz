@@ -11,23 +11,20 @@ var $ = require('jquery')
 var GREEN = [60,144,119]
 var RED = [245,10,10]
 var CIRCLE = 40
-
-var Slider = new Animation({
-  duration: 150,
-  easing: Easing('easeOutQuad')
-})
+var DISTANCE = 20
 
 var radius = function( degrees ) {
-  return degrees * ( Math.PI/180 );
+  return degrees * ( Math.PI/180 )
 }
 
 module.exports = React.createClass({
+  slider: null,
   getInitialState: function() {
     return {
       timestamp: null,
       limit: 0,
       score: null,
-      top: -30,
+      top: -DISTANCE,
       opacity: 0,
       answer: null
     }
@@ -53,6 +50,8 @@ module.exports = React.createClass({
       limit: this.props.question.time*1000,
       score: 1
     })
+    this.stop = false
+    this.tick()
   },
   answer: function(guess) {
     var solution = this.props.question.s
@@ -66,22 +65,25 @@ module.exports = React.createClass({
         seconds: Math.floor((this.state.limit*this.state.score)/100)/10
       }
     }})
-    this.onAnswer()
-  },
-  onAnswer: function() {
-    Slider.animateTo({
-      top: -30,
+    this.stop = true
+    this.slider.animateTo({
+      top: -DISTANCE,
       opacity: 0
     })
   },
   onSliderComplete: function() {
     if (this.state.answer) {
-      Slider.config.easing = Easing('easeOutQuad')
+      this.slider.setOptions({ easing: Easing('easeOutQuad') })
       var a = $.extend(true, {}, this.state.answer)
-      this.isMounted() && this.setState({ answer: null })
+      if( this.isMounted() )
+        this.setState({ 
+          answer: null,
+          score: 1
+        })
       this.props.onAnswer(a)
-    } else {
-      Slider.config.easing = Easing('easeInQuad')
+
+    } else if ( this.state.top > -1 ) {
+      this.slider.setOptions({ easing: Easing('easeOutQuad') })
       this.startTimer()
     }
   },
@@ -96,21 +98,33 @@ module.exports = React.createClass({
   },
   componentDidMount: function() {
     this.tick()
-    Slider.on('frame', this.onAnimFrame)
-    Slider.on('complete', this.onSliderComplete)
-    Slider.init({ 
+    if ( this.slider )
+      this.slider.destroy()
+    this.slider = new Animation({
+      duration: 200,
+      easing: Easing('easeOutQuad')
+    })
+    this.slider.on('frame', this.onAnimFrame)
+    this.slider.on('complete', this.onSliderComplete)
+    this.slider.init({ 
       top: this.state.top, 
       opacity: this.state.opacity 
-    }).animateTo({
-      top: 0,
-      opacity: 1
     })
+    setTimeout(function() {
+      if ( this.isMounted() ) {
+        this.slider.animateTo({
+          top: 0,
+          opacity: 1
+        })
+      }
+    }.bind(this), 20)
   },
   onAnimFrame: function(e) {
     this.setState(e.values)
   },
   componentWillUnmount: function() {
     this.stop = true
+    this.slider.destroy()
   },
   getColor: function() {
     var color = []
@@ -121,12 +135,16 @@ module.exports = React.createClass({
   },
   componentDidUpdate: function(prevprops, prevstate) {
     if(prevprops.q !== this.props.q) {
+      this.slider.moveTo({
+        top: -DISTANCE,
+        opacity: 0
+      })
       setTimeout(function() {
-        Slider.animateTo({
+        this.slider.animateTo({
           top: 0,
           opacity: 1
         })
-      }, 4)
+      }.bind(this), 4)
     }
     /*
     var degrees = 360 - (this.state.score*360)
@@ -155,28 +173,32 @@ module.exports = React.createClass({
     var src = this.props.question.img
     var img
     if ( src )
-      img = <div className="image"><img src={'/assets/quizimg/'+this.props.slug+'/'+src} /></div>
+      img = <img src={'/assets/quizimg/'+this.props.slug+'/'+src} />
 
     style = {
       '-webkit-transform': 'translate3d(0,'+this.state.top+'px,0)',
       opacity: this.state.opacity
     }
 
+    var bar = (
+      <div className="bar">
+        <div>
+          <div className="progress" style={{backgroundColor: this.getColor(), width: perc}}/>
+          <div className="anim" />
+        </div>
+      </div>
+    )
+
     return (
       <div className="question" style={style}>
-        {img}
-        {/*
-        <div className="bar">
-          <div>
-            <div className="progress" style={{backgroundColor: this.getColor(), width: perc}}/>
-            <div className="anim" />
-          </div>
+        <div className="image">{img}</div>
+        <div className="title">
+          <h1>lorem ism wef  ff fffffef wef {this.props.question.title}</h1>
         </div>
-        */}
-        <h1>{this.props.question.title}</h1>
         <div className="buttons">
           {buttons}
         </div>
+        {bar}
         {/*
         <div className="circle">
           <canvas ref="circle" width={CIRCLE*2} height={CIRCLE*2} style={{width:CIRCLE,height:CIRCLE}} />

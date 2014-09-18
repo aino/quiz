@@ -2,9 +2,10 @@
 var unloadMessage = ''
 
 exports.setUnloadMessage = function(getMessage) {
-  if ( typeof getMessage == 'function' )
+  if ( typeof getMessage == 'function' ) {
     unloadMessage = getMessage()
     //window.onbeforeunload = getMessage
+  }
 }
 
 exports.getUnloadMessage = function() {
